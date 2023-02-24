@@ -11,6 +11,7 @@ class MyWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.delimiter = ""
+        self.amounthOfSlides = None
         self.text_edit = QPlainTextEdit(self)
         self.setCentralWidget(self.text_edit)
 
@@ -112,6 +113,10 @@ class MyWindow(QMainWindow):
         if self.lineedit1.text() != "" and self.lineedit2.text() != "":
             reader = TextReader(self.lineedit1.text(), self.delimiter)
             self.text = reader.read()
+            self.amounthOfSlides = reader.amounthOfSlides()
+
+            self.createPresentation()
+
         else:
             # Создаем окно сообщения
             msg = QMessageBox()
@@ -125,6 +130,19 @@ class MyWindow(QMainWindow):
 
     def on_button4_clicked(self):
         self.delimiter = self.lineedit3.text()
+
+    def createPresentation(self):
+        try:
+            presentation = Presentation()
+
+            for slide_index in range(0, self.amounthOfSlides):
+                slide = presentation.slides.add_slide(presentation.slide_layouts[1])
+                subtitle = slide.placeholders[1]
+                subtitle.text = self.text[slide_index]
+
+            presentation.save(self.lineedit2.text())
+        except Exception as e:
+            print(e)
 
 def main():
     app = QApplication(sys.argv)

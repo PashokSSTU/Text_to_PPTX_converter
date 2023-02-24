@@ -13,6 +13,17 @@ class TextReader:
 		self.text = self.text.split(self.text_delimiter)
 		self.slides = len(self.text)
 
+		# Проверка на наличие разбиение текста на фрагменты для слайдов
+		try:
+			if self.slides > 1:
+				for text_str_index in range(len(self.text)):
+					self.text[text_str_index] = list(self.text[text_str_index])
+					self.text[text_str_index][0] = ""
+					self.text[text_str_index] = "".join(self.text[text_str_index])
+
+		except Exception as e:
+		    print(e)
+
 		return self.text
 
 	def amounthOfSlides(self):
