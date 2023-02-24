@@ -1,6 +1,6 @@
 import sys, os
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QFileDialog, QLineEdit, QPushButton, QVBoxLayout, QWidget, QPlainTextEdit, 
-    QMessageBox)
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QFileDialog, QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout,
+ QWidget, QPlainTextEdit, QMessageBox, QLabel)
 
 from text_parser import TextReader 
 from pptx import Presentation
@@ -10,7 +10,7 @@ class MyWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
-
+        self.delimiter = ""
         self.text_edit = QPlainTextEdit(self)
         self.setCentralWidget(self.text_edit)
 
@@ -22,7 +22,20 @@ class MyWindow(QMainWindow):
     def initUI(self):
         # Создаем главный виджет и вертикальный контейнер для кнопок
         main_widget = QWidget(self)
-        vbox = QVBoxLayout()
+
+        hbox_main = QHBoxLayout()
+
+        vbox1 = QVBoxLayout()
+        vbox2 = QVBoxLayout()
+
+        hbox1 = QHBoxLayout()
+        hbox2 = QHBoxLayout()
+
+        hbox_main.addLayout(vbox1)
+        hbox_main.addLayout(vbox2)
+
+        vbox1.addLayout(hbox1)
+        vbox1.addLayout(hbox2)
 
         # Создаем первую кнопку "Browse" и поле ввода для первого файла
         self.button1 = QPushButton('Browse', self)
@@ -41,14 +54,27 @@ class MyWindow(QMainWindow):
         self.button3.clicked.connect(self.on_button3_clicked)
 
         # Добавляем кнопки и поля ввода в контейнер
-        vbox.addWidget(self.button1)
-        vbox.addWidget(self.lineedit1)
-        vbox.addWidget(self.button2)
-        vbox.addWidget(self.lineedit2)
-        vbox.addWidget(self.button3)
+        hbox1.addWidget(self.button1)
+        hbox1.addWidget(self.lineedit1)
+        hbox2.addWidget(self.button2)
+        hbox2.addWidget(self.lineedit2)
+        vbox1.addWidget(self.button3)
+
+        # Добавляем ввод разделительного символа
+        self.label1 = QLabel(self)
+        self.label1.setAutoFillBackground(True)
+        self.label1.setText("Введите разделительный символ для текста")
+        self.lineedit3 = QLineEdit(self)
+        vbox2.addWidget(self.label1)
+        vbox2.addWidget(self.lineedit3)
+
+        self.button4 = QPushButton('Применить символ', self)
+        self.button4.clicked.connect(self.on_button4_clicked)
+
+        vbox2.addWidget(self.button4)
 
         # Устанавливаем контейнер как главный виджет окна
-        main_widget.setLayout(vbox)
+        main_widget.setLayout(hbox_main)
         self.setCentralWidget(main_widget)
 
         # Устанавливаем заголовок окна и размеры
@@ -71,21 +97,34 @@ class MyWindow(QMainWindow):
 
     def on_button3_clicked(self):
         self.text = None
+        
+        if self.delimiter == "":
+            msg = QMessageBox()
+            msg.setWindowTitle("Information")
+            msg.setText("Введите разделительный символ")
+            msg.setIcon(QMessageBox.Information)
+
+            ok_button = msg.addButton(QMessageBox.Ok)
+            msg.exec_()
+            return
+
         # Проверяем наличие выбранных путей к файлам
         if self.lineedit1.text() != "" and self.lineedit2.text() != "":
-            reader = TextReader(self.lineedit1.text(), "+")
+            reader = TextReader(self.lineedit1.text(), self.delimiter)
             self.text = reader.read()
-            print(reader.amounthOfSlides())
         else:
             # Создаем окно сообщения
             msg = QMessageBox()
             msg.setWindowTitle("Information")
-            msg.setText("Please select files")
+            msg.setText("Выберите файлы")
             msg.setIcon(QMessageBox.Information)
 
             # Добавляем кнопку "OK" и показываем окно
             ok_button = msg.addButton(QMessageBox.Ok)
             msg.exec_()
+
+    def on_button4_clicked(self):
+        self.delimiter = self.lineedit3.text()
 
 def main():
     app = QApplication(sys.argv)
