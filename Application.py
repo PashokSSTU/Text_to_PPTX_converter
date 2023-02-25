@@ -71,6 +71,7 @@ class MyWindow(QMainWindow):
         self.checkbox1.clicked.connect(self.on_checkbox1_clicked)
         self.lineedit3 = QLineEdit(self)
         self.lineedit3.setStyleSheet("background-color: #f5f5f5")
+        self.lineedit3.setReadOnly(True)
         vbox2.addWidget(self.label3)
         vbox2.addWidget(self.checkbox1)
         vbox2.addWidget(self.lineedit3)
