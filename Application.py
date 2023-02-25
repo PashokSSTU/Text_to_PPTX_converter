@@ -79,7 +79,7 @@ class MyWindow(QMainWindow):
         self.setCentralWidget(main_widget)
 
         # Устанавливаем заголовок окна и размеры
-        self.setWindowTitle('File Browser')
+        self.setWindowTitle('Text to Power Point converter')
         self.setGeometry(100, 100, 400, 200)
         
     def on_button1_clicked(self):
@@ -114,7 +114,6 @@ class MyWindow(QMainWindow):
             reader = TextReader(self.lineedit1.text(), self.delimiter)
             self.text = reader.read()
             self.amounthOfSlides = reader.amounthOfSlides()
-
             self.createPresentation()
 
         else:
