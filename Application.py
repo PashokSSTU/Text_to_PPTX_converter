@@ -1,6 +1,7 @@
 import sys, os
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QFileDialog, QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout,
- QWidget, QPlainTextEdit, QMessageBox, QLabel)
+ QWidget, QPlainTextEdit, QMessageBox, QLabel, QProgressBar, QCheckBox)
+from PyQt5.QtCore import Qt, pyqtSignal
 
 from text_parser import TextReader 
 from pptx import Presentation
@@ -39,13 +40,13 @@ class MyWindow(QMainWindow):
         vbox1.addLayout(hbox2)
 
         # Создаем первую кнопку "Browse" и поле ввода для первого файла
-        self.button1 = QPushButton('Browse', self)
+        self.button1 = QPushButton('Read', self)
         self.button1.clicked.connect(self.on_button1_clicked)
         self.lineedit1 = QLineEdit(self)
         self.lineedit1.setReadOnly(True)
 
         # Создаем вторую кнопку "Browse" и поле ввода для второго файла
-        self.button2 = QPushButton('Browse', self)
+        self.button2 = QPushButton('Write', self)
         self.button2.clicked.connect(self.on_button2_clicked)
         self.lineedit2 = QLineEdit(self)
         self.lineedit2.setReadOnly(True)
@@ -62,11 +63,16 @@ class MyWindow(QMainWindow):
         vbox1.addWidget(self.button3)
 
         # Добавляем ввод разделительного символа
-        self.label1 = QLabel(self)
-        self.label1.setAutoFillBackground(True)
-        self.label1.setText("Введите разделительный символ для текста")
+        self.label3 = QLabel(self)
+        self.label3.setAutoFillBackground(True)
+        self.label3.setText("Введите разделительный символ для текста")
+        self.checkbox1 = QCheckBox("Использовать ENTER")
+        self.checkbox1.setChecked(True)
+        self.checkbox1.clicked.connect(self.on_checkbox1_clicked)
         self.lineedit3 = QLineEdit(self)
-        vbox2.addWidget(self.label1)
+        self.lineedit3.setStyleSheet("background-color: #f5f5f5")
+        vbox2.addWidget(self.label3)
+        vbox2.addWidget(self.checkbox1)
         vbox2.addWidget(self.lineedit3)
 
         self.button4 = QPushButton('Применить символ', self)
@@ -74,13 +80,19 @@ class MyWindow(QMainWindow):
 
         vbox2.addWidget(self.button4)
 
+        # Создаем progress bar, отображающую процесс конвертации
+        self.progress_bar = QProgressBar()
+        self.progress_bar.setGeometry(30, 40, 200, 25)
+        self.progress_bar.setValue(0)
+        vbox2.addWidget(self.progress_bar)
+
         # Устанавливаем контейнер как главный виджет окна
         main_widget.setLayout(hbox_main)
         self.setCentralWidget(main_widget)
 
         # Устанавливаем заголовок окна и размеры
         self.setWindowTitle('Text to Power Point converter')
-        self.setGeometry(100, 100, 400, 200)
+        self.setGeometry(300, 300, 1200, 200)
         
     def on_button1_clicked(self):
         # Открываем диалог выбора файла для первого файла
@@ -127,7 +139,6 @@ class MyWindow(QMainWindow):
             self.text = reader.read()
             self.amounthOfSlides = reader.amounthOfSlides()
             self.createPresentation()
-
         else:
             # Создаем окно сообщения
             msg = QMessageBox()
@@ -140,7 +151,18 @@ class MyWindow(QMainWindow):
             msg.exec_()
 
     def on_button4_clicked(self):
-        self.delimiter = self.lineedit3.text()
+        if self.checkbox1.isChecked() == True:
+            self.delimiter = "\n"
+        else:
+            self.delimiter = self.lineedit3.text()
+
+    def on_checkbox1_clicked(self):
+        if self.checkbox1.isChecked() == True:
+            self.lineedit3.setReadOnly(True)
+            self.lineedit3.setStyleSheet("background-color: #f5f5f5")
+        else:
+            self.lineedit3.setReadOnly(False)
+            self.lineedit3.setStyleSheet("background-color: #ffffff")
 
     def createPresentation(self):
         presentation = Presentation()
@@ -149,6 +171,7 @@ class MyWindow(QMainWindow):
             slide = presentation.slides.add_slide(presentation.slide_layouts[1])
             subtitle = slide.placeholders[1]
             subtitle.text = self.text[slide_index]
+            self.progress_bar.setValue(int(((slide_index + 1) / self.amounthOfSlides) * 100))
 
         presentation.save(self.lineedit2.text())
 
@@ -161,6 +184,8 @@ class MyWindow(QMainWindow):
         # Добавляем кнопку "OK" и показываем окно
         ok_button = msg.addButton(QMessageBox.Ok)
         msg.exec_()
+
+        self.progress_bar.setValue(0)
 
 def main():
     app = QApplication(sys.argv)

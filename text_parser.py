@@ -26,8 +26,7 @@ class TextReader:
 			word.Quit() # Закрываем приложение Word
 
 		# Заменяем все вхождения символов новой строки и переноса каретки на пустую строку с помощью регулярных выражений
-		self.text = re.sub(r'[\n\r]+', '', self.text)
-
+		self.text = re.sub(r'[\n\r]+', '\n', self.text)
 		self.text = self.text.split(self.text_delimiter)
 		self.slides = len(self.text)
 
