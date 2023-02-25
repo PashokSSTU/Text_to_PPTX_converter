@@ -2,7 +2,7 @@
 
 ## Список сторонних библиотек
 * [cx_Freeze](https://pypi.org/project/cx-Freeze/) - для сборки исполняемого файла со всеми зависимостями.
-* [pyinstaller](https://pypi.org/project/pyinstaller/) - для сборки единого исполняемого файла
+* (В НАСТОЯЩИЙ МОМЕНТ НЕ ПОДДЕРЖИВАЕТСЯ!)[pyinstaller](https://pypi.org/project/pyinstaller/) - для сборки единого исполняемого файла
 * [PyQT5](https://pypi.org/project/PyQt5/) - для создания dekstop приложения.
 * [python-pptx](https://pypi.org/project/python-pptx/) - для работы с файлами .pptx для презентация Microsoft Power Point.
 * [python-docx](https://pypi.org/project/python-docx/) - для работы с docx файлами Microsoft Word.
@@ -20,7 +20,7 @@ python setup.py build
 ```
 После этого у вас создастся директория build, в которой должна будет лежать папка с собранным исполняемым файлом и с необходимыми зависимостями.
 
-#### Сборка с помощью pyinstaller
+#### Сборка с помощью pyinstaller (В НАСТОЯЩИЙ МОМЕНТ НЕ ПОДДЕРЖИВАЕТСЯ!)
 Откройте терминал.
 Введите туда следующие команды:
 ```
