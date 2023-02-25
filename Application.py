@@ -86,12 +86,24 @@ class MyWindow(QMainWindow):
         # Открываем диалог выбора файла для первого файла
         self.textFilePath, _ = QFileDialog.getOpenFileName(self, 'Open file', '')
         if self.textFilePath:
-            # Обновляем текст в поле ввода для первого файла
-            self.lineedit1.setText(self.textFilePath)
+            file_extension = os.path.splitext(self.textFilePath)[1]
+
+            if file_extension != ".txt" and file_extension != ".doc" and file_extension != ".docx":
+                msg = QMessageBox()
+                msg.setWindowTitle("Information")
+                msg.setText("Файл с данным расширением несовместим для конвертации! Выберите другой файл")
+                msg.setIcon(QMessageBox.Information)
+
+                ok_button = msg.addButton(QMessageBox.Ok)
+                msg.exec_()
+            else:
+                # Обновляем текст в поле ввода для первого файла
+                self.lineedit1.setText(self.textFilePath)
+
 
     def on_button2_clicked(self):
         # Открываем диалог выбора файла для второго файла
-        self.presFilePath, _ = QFileDialog.getSaveFileName(self, 'Open file', '')
+        self.presFilePath, _ = QFileDialog.getSaveFileName(self, "Сохранить презентацию", "", "PowerPoint Presentation (*.pptx)")
         if self.presFilePath:
             # Обновляем текст в поле ввода для второго файла
             self.lineedit2.setText(self.presFilePath)
@@ -131,17 +143,24 @@ class MyWindow(QMainWindow):
         self.delimiter = self.lineedit3.text()
 
     def createPresentation(self):
-        try:
-            presentation = Presentation()
+        presentation = Presentation()
 
-            for slide_index in range(0, self.amounthOfSlides):
-                slide = presentation.slides.add_slide(presentation.slide_layouts[1])
-                subtitle = slide.placeholders[1]
-                subtitle.text = self.text[slide_index]
+        for slide_index in range(0, self.amounthOfSlides):
+            slide = presentation.slides.add_slide(presentation.slide_layouts[1])
+            subtitle = slide.placeholders[1]
+            subtitle.text = self.text[slide_index]
 
-            presentation.save(self.lineedit2.text())
-        except Exception as e:
-            print(e)
+        presentation.save(self.lineedit2.text())
+
+        # Создаем окно сообщения
+        msg = QMessageBox()
+        msg.setWindowTitle("Information")
+        msg.setText("Конвертация завершена")
+        msg.setIcon(QMessageBox.Information)
+
+        # Добавляем кнопку "OK" и показываем окно
+        ok_button = msg.addButton(QMessageBox.Ok)
+        msg.exec_()
 
 def main():
     app = QApplication(sys.argv)

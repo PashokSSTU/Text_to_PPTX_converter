@@ -4,6 +4,8 @@
 * [cx_Freeze](https://pypi.org/project/cx-Freeze/) - для сборки исполняемого файла со всеми зависимостями.
 * [PyQT5](https://pypi.org/project/PyQt5/) - для создания dekstop приложения.
 * [python-pptx](https://pypi.org/project/python-pptx/) - для работы с файлами .pptx для презентация Microsoft Power Point.
+* [python-docx](https://pypi.org/project/python-docx/) - для работы с docx файлами Microsoft Word.
+* [pywin32](https://pypi.org/project/pywin32/) -  - для работы с doc файлами Microsoft Word.
 
 ## Инструкции к сборке приложения
 
